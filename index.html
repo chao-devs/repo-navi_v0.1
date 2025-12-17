@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>レポナビ v0</title>
+</head>
+<body>
+  <h1>レポナビ（構成AI）</h1>
+
+  <textarea id="theme" rows="5" cols="60" placeholder="レポートのテーマを入力してください"></textarea>
+  <br><br>
+
+  <button id="generateBtn">構成を生成する</button>
+
+  <hr>
+
+  <pre id="result">ここに結果が表示されます</pre>
+
+  <script>
+    const button = document.getElementById("generateBtn");
+    const result = document.getElementById("result");
+    const themeInput = document.getElementById("theme");
+
+    button.addEventListener("click", async () => {
+      const theme = themeInput.value;
+      result.textContent = "生成中...";
+
+      try {
+        const response = await fetch("http://127.0.0.1:8000/structure", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text: theme })
+        });
+
+        const data = await response.json();
+        result.textContent = data.data.structuring;
+      } catch (e) {
+        result.textContent = "エラー:\n" + e;
+      }
+    });
+  </script>
+
+  <hr style="margin:24px 0; border:none; border-top:1px dashed #e5e7eb;">
+
+  <a
+  href="https://mire-ranunculus-21f.notion.site/2cc0666dae18809ca0a0fa46fc8260e8?pvs=105"
+  target="_blank"
+  rel="noopener noreferrer"
+  style="color:#2563eb; text-decoration:underline;"
+  >
+  📝 改善にご協力をお願いします（1,2分）
+  </a>
+  <div style="margin-top:4px; font-size:12px; color:#6b7280;">
+  ※完全匿名・ログイン不要
+  </div>
+
+</body>
+</html>
