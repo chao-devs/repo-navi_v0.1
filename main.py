@@ -107,7 +107,7 @@ def structure(data:Input):
         
     return {
         "length" : data.length,
-        "structuring" : structuring
+        "structure" : structuring
     }
 
 @app.get("/")

@@ -40,6 +40,7 @@
     const facultySelect = document.getElementById("faculty");
     const themeInput  = document.getElementById("theme");
     const lengthSelect = document.getElementById("length");
+    const result = document.getElementById("result");
 
     button.addEventListener("click", async () => {
       const theme = themeInput.value;
@@ -56,7 +57,7 @@
         });
 
         const data = await response.json();
-        result.textContent = data.data.structuring;
+        result.textContent = data.structure;
       } catch (e) {
         result.textContent = "エラー:\n" + e;
       }
