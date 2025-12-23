@@ -26,8 +26,36 @@ api_key = os.getenv("OPENAI_API_KEY")
 class Input(BaseModel):
     text : str
     length : int
+    faculty : str
 
 client = OpenAI(api_key=api_key)
+
+HUMANITIES_RULE = """
+文系レポートとして、以下の流れで見出し構成を作成せよ。
+1. 研究背景・問題提起
+2. 用語や概念の整理
+3. 主要な議論・論点
+4. 批判的考察・課題
+5. 結論・示唆
+"""
+
+SCIENCE_RULE = """
+理系レポートとして、以下の流れで見出し構成を作成せよ。
+1. 研究対象の定義
+2. 理論・仕組みの説明
+3. 方法・手法・アプローチ
+4. 結果・考察
+5. 限界と今後の展望
+"""
+
+MIXED_RULE = """
+文理融合系レポートとして、以下の流れで見出し構成を作成せよ。
+1. 技術・テーマの概要
+2. 技術的仕組みや特徴
+3. 社会への応用・影響
+4. 課題・リスク・倫理的観点
+5. 将来展望
+"""
 
 @app.post("/structure")
 def structure(data:Input):
@@ -39,13 +67,18 @@ def structure(data:Input):
         h2_count = 3
         h3_count = 2
         rule_text = "H2は3つ作り、各H2にH3を2つずつ含めてください。"
-    else:
+    elif data.length == 2000:
         h2_count = 4
         h3_count = 2
         rule_text = "H2は4つ作り、各H2にH3を2つずつ含めてください。"
 
+    if data.faculty=="humanities":
+        rule = HUMANITIES_RULE
+    elif data.faculty=="science":
+        rule = SCIENCE_RULE
+    else:
+        rule = MIXED_RULE
     
-
 
     messages = [
         {
@@ -72,6 +105,7 @@ def structure(data:Input):
                 "指定された見出し記号（#, ##, ###）を必ず使用してください。\n"
                 "フォーマット例を内容で置き換えず、構造として守ってください。"
                 "この見出しフレームの構造・順序・数は絶対に変更しないでください。"
+                + rule
             )
         },
         {
