@@ -7,31 +7,52 @@
 <body>
   <h1>レポナビ（構成AI）</h1>
 
-<input id="theme">
-<input id="task">
-<input id="length">
-<button id="templateBtn">テンプレートを生成</button>
+  <label>学部系（必須）</label><br>
+  <select id="faculty">
+    <option value="" disabled selected>選択してください</option>
+    <option value="humanities">文系</option>
+    <option value="science">理系</option>
+    <option value="mixed">文理融合系</option>
+  </select>
+  <br><br>
 
+  <label>課題文（必須）</label><br>
+  <textarea id="theme" placeholder="レポートの課題文を入力してください"></textarea>
+  <br><br>
+
+  <label>文字数（必須）</label><br>
+  <select id="length">
+    <option value="" disabled selected>選択してください</option>
+    <option value="500">500</option>
+    <option value="1000">1000</option>
+    <option value="2000">2000</option>
+  </select>
+  
+  <br><br>
+  <button id="generateBtn">構成を生成する</button>
+  
   <hr>
 
   <pre id="result">ここに結果が表示されます</pre>
 
   <script>
+    const button = document.getElementById("generateBtn");
+    const facultySelect = document.getElementById("faculty");
     const themeInput  = document.getElementById("theme");
-    const taskInput   = document.getElementById("task");
-    const lengthInput = document.getElementById("length");
-    const templateBtn = document.getElementById("templateBtn");
+    const lengthSelect = document.getElementById("length");
 
     button.addEventListener("click", async () => {
       const theme = themeInput.value;
+      const faculty = facultySelect.value;
+      const length = lengthSelect.value;
       result.textContent = "生成中...";
 
       try {
 
-        const response = await fetch("https://ai-constructer-v0.onrender.com/structure", {
+        const response = await fetch("https://ai-con-v1.onrender.com/structure", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ text: theme })
+          body: JSON.stringify({text: theme,length: length,faculty: faculty})
         });
 
         const data = await response.json();
@@ -39,6 +60,11 @@
       } catch (e) {
         result.textContent = "エラー:\n" + e;
       }
+    });
+    const lengthselect = document.getElementById("length");
+
+    lengthselect.addEventListener("change", () =>{
+    console.log(lengthselect.value)
     });
   </script>
 

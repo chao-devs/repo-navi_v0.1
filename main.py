@@ -25,11 +25,28 @@ api_key = os.getenv("OPENAI_API_KEY")
 
 class Input(BaseModel):
     text : str
+    length : int
 
 client = OpenAI(api_key=api_key)
 
 @app.post("/structure")
 def structure(data:Input):
+    if data.length == 500:
+        h2_count = 2
+        h3_count = 0
+        rule_text = "H2は2つ作り、H3は使わないでください。簡潔な構成にしてください。"
+    elif data.length == 1000:
+        h2_count = 3
+        h3_count = 2
+        rule_text = "H2は3つ作り、各H2にH3を2つずつ含めてください。"
+    else:
+        h2_count = 4
+        h3_count = 2
+        rule_text = "H2は4つ作り、各H2にH3を2つずつ含めてください。"
+
+    
+
+
     messages = [
         {
             "role": "system",
@@ -59,7 +76,10 @@ def structure(data:Input):
         },
         {
             "role": "user",
-            "content": data.text
+            "content": (
+                f"課題文:{data.text}\n"
+                f"{rule_text}"
+            )
         }
     ]
 
@@ -86,14 +106,6 @@ def structure(data:Input):
         json.dump(structures,f,ensure_ascii=False,indent=2)
         
     return {
-        "data":{
-            "structuring":structuring
-        },
-        "meta":{
-            "saved":True
-        }
+        "length" : data.length,
+        "structure" : structuring
     }
-
-@app.get("/")
-def home():
-    return FileResponse("static/index.html")
